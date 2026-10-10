@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GMFLIX</title>
+<style>
+:root{--g:rgba(255,255,255,.12);--gb:rgba(255,255,255,.22);--m:rgba(255,255,255,.65);--a:#0a84ff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Hind Siliguri",system-ui,sans-serif;color:#fff;background:#000;min-height:100vh;padding-bottom:110px}
+.glass{background:var(--g);border:1px solid var(--gb);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border-radius:22px}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.hide{display:none!important}
+.wrap{max-width:1000px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 20px) 18px 0}
+.top{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.logo{font-size:1.7rem;font-weight:800;letter-spacing:-.04em}
+input,select{background:rgba(255,255,255,.14);border:1px solid var(--gb);border-radius:14px;padding:.7rem 1rem;width:100%;outline:0}
+input::placeholder{color:var(--m)}
+select option{color:#000}
+.btn{background:var(--a);border:0;border-radius:14px;padding:.7rem 1.3rem;font-weight:600}
+.btn.s{background:var(--g);border:1px solid var(--gb)}
+.btn.d{background:#ff453a}
+.btn.sm{padding:.45rem .8rem;font-size:.85rem}
+h2{font-size:1.4rem;margin:6px 0 14px}
+.p{padding:20px;margin-bottom:14px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-top:1px solid var(--gb)}
+.item.ep{padding-left:16px}
+.muted{color:var(--m);font-size:.9rem}
+.chips{display:flex;gap:8px;overflow-x:auto;margin-bottom:18px;padding-bottom:4px}
+.chip{flex:none;padding:.5rem 1.1rem;border-radius:99px;background:var(--g);border:1px solid var(--gb);color:var(--m)}
+.chip.on{background:#fff;color:#000;border-color:#fff;font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.card{aspect-ratio:2/3;padding:14px;display:flex;flex-direction:column;justify-content:flex-end;text-align:left;border:1px solid var(--gb);border-radius:20px;position:relative;overflow:hidden;background-size:cover}
+.card b{font-size:1.05rem;line-height:1.15;text-shadow:0 1px 6px #000}
+.pin{position:absolute;top:10px;left:10px;font-size:.75rem;padding:.2rem .6rem;border-radius:99px;background:rgba(0,0,0,.5)}
+.hero{min-height:260px;border-radius:24px;display:flex;align-items:flex-end;padding:24px;margin-bottom:22px;border:1px solid var(--gb)}
+.hero h1{font-size:clamp(2rem,6vw,3.2rem);letter-spacing:-.03em;line-height:1.05;margin:4px 0 16px;text-shadow:0 2px 10px #000}
+.track{display:flex;gap:12px;overflow-x:auto;padding-bottom:10px;margin-bottom:12px}
+.cw{flex:0 0 150px}
+.bar{height:4px;background:rgba(255,255,255,.3);border-radius:4px;margin-top:10px}
+.bar i{display:block;height:100%;background:#fff;border-radius:4px}
+.av{width:48px;height:48px;border-radius:50%;background:var(--g);border:1px solid var(--gb);display:grid;place-items:center;font-weight:700}
+.tabs{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom) + 14px);display:flex;padding:8px;gap:4px;width:min(440px,92vw);border-radius:30px;z-index:5}
+.tabs button{flex:1;background:none;border:0;padding:.6rem .2rem;border-radius:22px;color:var(--m);font-size:.85rem}
+.tabs button.on{background:rgba(255,255,255,.22);color:#fff}
+dialog{position:fixed;inset:0;width:100%;height:100%;max-width:none;max-height:none;margin:0;padding:0;border:0;background:#000;color:#fff;overflow:hidden}
+.pw{position:relative;width:100%;height:100%;background:#000}
+video{width:100%;height:100%;object-fit:contain;display:block;background:#000}
+.ov{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:calc(env(safe-area-inset-top) + 10px) 14px calc(env(safe-area-inset-bottom) + 10px);background:linear-gradient(rgba(0,0,0,.65),transparent 25%,transparent 70%,rgba(0,0,0,.75));transition:opacity .3s}
+.ov.h{opacity:0;pointer-events:none}
+.ot,.ob{display:flex;align-items:center;gap:10px}
+.ot b{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.oc{position:absolute;inset:0;display:flex;justify-content:center;align-items:center;gap:26px;pointer-events:none}
+.oc button{pointer-events:auto}
+.ib{background:rgba(255,255,255,.16);border:1px solid var(--gb);border-radius:99px;min-width:44px;height:44px;padding:0 14px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.ib.big{height:64px;min-width:64px;font-size:1.1rem}
+.ob input[type=range]{flex:1;padding:0;background:none;border:0;accent-color:#fff;height:28px}
+.ob span{font-size:.8rem;min-width:38px;text-align:center}
+.set{position:absolute;top:calc(env(safe-area-inset-top) + 64px);right:14px;width:min(300px,90vw);padding:14px;background:rgba(30,30,30,.85)}
+.set label{display:block;font-size:.8rem;color:var(--m);margin:8px 0 4px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="top"><div class="logo">GMFLIX</div><input id="q" type="search" placeholder="Search" aria-label="Search"></div>
+
+  <section id="v-home">
+    <div id="chips" class="chips"></div>
+    <div id="hero" class="hero hide"><div><p class="muted" id="hh"></p><h1 id="ht"></h1><button class="btn" id="hp">▶ Play</button></div></div>
+    <div id="contw" class="hide"><h2>Continue watching</h2><div id="cont" class="track"></div></div>
+    <h2 id="gh">All videos</h2><div id="grid" class="grid"></div>
+  </section>
+
+  <section id="v-request" class="hide"><h2>Request</h2><div class="glass p">
+    <input id="rq" placeholder="কোন ভিডিও চান তার নাম লিখুন"><div class="row"><button class="btn" id="rqb">Send request</button></div>
+    <div id="rql" style="margin-top:14px"></div></div></section>
+
+  <section id="v-history" class="hide">
+    <div class="row" style="justify-content:space-between;margin:0"><h2>History</h2><button class="btn s" id="hc">Clear</button></div>
+    <div class="glass p" id="hl"></div></section>
+
+  <section id="v-account" class="hide"><h2>Account</h2>
+    <div class="glass p" id="lf"><p class="muted" style="margin-bottom:14px">আপনার Gmail ঠিকানা দিয়ে ঢুকুন। লগইন করলে দেখা ভিডিও History-তে জমা হবে।</p>
+      <input id="em" type="email" placeholder="name@gmail.com" autocomplete="email">
+      <p id="err" class="muted" style="color:#ff9f9a;margin-top:8px"></p>
+      <button class="btn" id="go" style="width:100%;margin-top:14px">Continue</button></div>
+    <div class="glass p hide" id="li"><div class="row" style="margin:0"><div class="av" id="av"></div><p id="acc"></p></div>
+      <div class="row"><button class="btn s" id="out">Sign out</button><button class="btn hide" id="adm">Admin panel</button></div></div></section>
+
+  <section id="v-season" class="hide"><div class="row" style="margin:0"><button class="btn s" id="sb">← Back</button></div>
+    <h2 id="stl" style="margin-top:14px"></h2><div class="glass p" id="sl3"></div></section>
+
+  <section id="v-admin" class="hide"><h2>Admin panel</h2>
+    <div class="glass p"><b>ভিডিও আপলোড</b>
+      <div class="row"><input id="at" placeholder="Title (এই ফাইলের নাম / এপিসোডের নাম)"></div>
+      <div class="row"><select id="ag" aria-label="Category"><option value="">Category: কিছু না (সব Mix-এ থাকবে)</option><option>Horror</option><option>Love</option><option>Funny</option><option>War</option><option>Other</option></select></div>
+      <label class="row" style="margin-top:12px;gap:8px"><input type="checkbox" id="sc" style="width:auto"> Season-এর অংশ</label>
+      <div id="sw" class="hide">
+        <div class="row"><select id="sn" aria-label="Season" style="flex:1"></select><button class="btn" id="sa" aria-label="নতুন Season বানান" style="font-size:1.3rem;padding:.4rem 1rem">+</button></div>
+        <div class="row"><input id="se" type="number" min="1" placeholder="Part নম্বর (খালি রাখলে নিজে বসবে)"></div></div>
+      <p class="muted" style="margin-top:12px">ভিডিও (MP4, WebM বা MKV)</p>
+      <div class="row" style="margin-top:4px"><input id="af" type="file" accept="video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov,.mkv"></div>
+      <div id="tk" class="hide" style="margin-top:10px"><b>MKV থেকে যা যা রাখবেন</b><div id="tl"></div>
+        <p class="muted" style="margin-top:8px">Upload চাপলে নিজেই MP4 হয়ে সেভ হবে। সব অডিও ভাষা থাকবে, সাবটাইটেল প্লেয়ারের ⚙ থেকে বাছা যাবে।</p>
+        <div class="bar hide" id="cb"><i id="cp" style="width:0"></i></div></div>
+      <p class="muted" style="margin-top:10px">পোস্টার ছবি (ঐচ্ছিক)</p>
+      <div class="row" style="margin-top:4px"><input id="pf" type="file" accept="image/*"></div>
+      <p class="muted" style="margin-top:10px">সাবটাইটেল (ঐচ্ছিক, .vtt বা .srt, একসাথে একাধিক)</p>
+      <div class="row" style="margin-top:4px"><input id="sf" type="file" accept=".vtt,.srt" multiple><select id="sl" style="max-width:180px" aria-label="ভাষা (নাম থেকে না ধরলে)"><option>English</option><option>বাংলা</option><option>Hindi</option><option>Arabic</option></select></div>
+      <p class="muted" style="margin-top:6px">ফাইলের নাম <i>name.eng.vtt</i> হলে ভাষা নিজে ধরবে, নইলে ডানের ভাষা বসবে।</p>
+      <div class="row"><button class="btn" id="up">Upload</button><span id="us" class="muted"></span></div>
+      <p id="sq" class="muted" style="margin-top:10px"></p></div>
+    <div class="glass p"><b>আপনার ভিডিও</b><div id="al"></div></div>
+  </section>
+</div>
+
+<nav class="tabs glass" aria-label="Main">
+  <button data-v="home" class="on">Home</button><button data-v="request">Request</button><button data-v="history">History</button><button data-v="account">Account</button>
+</nav>
+
+<dialog id="dlg"><div class="pw" id="pw">
+  <video id="vid" playsinline></video>
+  <div class="ov" id="ov">
+    <div class="ot"><button class="ib" id="pc" aria-label="Close">✕</button><b id="pt"></b><button class="ib" id="gear" aria-label="Settings">⚙</button></div>
+    <div class="oc"><button class="ib big" id="b10" aria-label="Back 10 seconds">−10</button><button class="ib big" id="pp" aria-label="Play or pause">▶</button><button class="ib big" id="f10" aria-label="Forward 10 seconds">+10</button></div>
+    <div class="ob"><span id="tc">0:00</span><input id="sk" type="range" min="0" max="1000" value="0" aria-label="Seek"><span id="td">0:00</span><button class="ib" id="mu" aria-label="Mute">🔊</button><button class="ib" id="fs" aria-label="Full screen">⛶</button></div>
+    <div class="set glass hide" id="set">
+      <label for="ar">Aspect ratio</label><select id="ar"><option value="contain">Fit</option><option value="cover">Fill</option><option value="fill">Stretch</option></select>
+      <label for="au">Audio language</label><select id="au"><option>Default</option></select>
+      <label for="su">Subtitles</label><select id="su"><option value="-1">Off</option></select>
+    </div>
+  </div>
+</div></dialog>
+
+<script>
+// ===== অ্যাডমিন Gmail =====
+const ADMIN = "gmnabid94@gmail.com";
+// ==========================
+const G = ['Horror', 'Love', 'Funny', 'War', 'Other'];
+const $ = id => document.getElementById(id);
+const LS = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d } catch { return d } };
+const SV = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)) } catch {} };
+const LN = c => { try { return new Intl.DisplayNames(['bn'], { type: 'language' }).of(String(c).toLowerCase()) || c } catch { return c } };
+const guess = n => { const m = n.match(/\.([a-z]{2,3})\.(vtt|srt)$/i); return m ? LN(m[1]) : null };
+const toVtt = async f => {
+  let t = (await f.text()).replace(/^\uFEFF/, '').replace(/\r/g, '');
+  if (/\.srt$/i.test(f.name) || !/^WEBVTT/.test(t)) t = 'WEBVTT\n\n' + t.replace(/(\d\d:\d\d:\d\d),(\d{3})/g, '$1.$2');
+  return new Blob([t], { type: 'text/vtt' });
+};
+
+// ---- IndexedDB: ভিডিও, পোস্টার, সাবটাইটেল এই ব্রাউজারেই থাকে ----
+let db;
+const open = () => new Promise((ok, no) => {
+  const r = indexedDB.open('gmflix', 1);
+  r.onupgradeneeded = () => r.result.createObjectStore('v', { keyPath: 'id' });
+  r.onsuccess = () => { db = r.result; ok() }; r.onerror = no;
+});
+const tx = (m, f) => new Promise((ok, no) => { const s = db.transaction('v', m).objectStore('v'); const r = f(s); r.onsuccess = () => ok(r.result); r.onerror = () => no(r.error) });
+const all = () => tx('readonly', s => s.getAll());
+const put = v => tx('readwrite', s => s.put(v));
+const del = id => tx('readwrite', s => s.delete(id));
+
+let user = LS('user', null), videos = [], cur = null, queue = [], gen = '';
+const isAdmin = () => user && user.toLowerCase() === ADMIN.toLowerCase();
+const byEp = (a, b) => (a.ep || 0) - (b.ep || 0) || a.created - b.created;
+const seasons = () => [...new Set([...LS('seasons', []), ...videos.filter(v => v.season).map(v => v.season)])];
+
+// ---- Login ----
+$('go').onclick = () => {
+  const e = $('em').value.trim();
+  if (!/^[^\s@]+@gmail\.com$/i.test(e)) { $('err').textContent = 'একটি সঠিক Gmail ঠিকানা দিন'; return }
+  user = e; SV('user', e); $('err').textContent = ''; boot(); show('home');
+};
+$('em').addEventListener('keydown', e => e.key === 'Enter' && $('go').click());
+$('out').onclick = () => { localStorage.removeItem('user'); location.reload() };
+function boot() {
+  $('lf').classList.toggle('hide', !!user);
+  $('li').classList.toggle('hide', !user);
+  $('acc').textContent = user || '';
+  $('av').textContent = user ? user[0].toUpperCase() : '';
+  $('adm').classList.toggle('hide', !isAdmin());
+  chips(); refresh();
+}
+
+// ---- Tabs ----
+function show(v) {
+  ['home', 'request', 'history', 'account', 'admin', 'season'].forEach(n => $('v-' + n).classList.toggle('hide', n !== v));
+  document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('on', b.dataset.v === v));
+  if (v === 'history') renderHistory();
+  if (v === 'request') renderReq();
+}
+document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => show(b.dataset.v));
+$('adm').onclick = () => { if (isAdmin()) show('admin') };
+
+// ---- Home ----
+function chips() {
+  const c = $('chips'); c.innerHTML = '';
+  ['All', ...G].forEach(n => {
+    const b = document.createElement('button'); b.className = 'chip' + ((n === 'All' ? '' : n) === gen ? ' on' : ''); b.textContent = n;
+    b.onclick = () => { gen = n === 'All' ? '' : n; chips(); renderGrid() }; c.appendChild(b);
+  });
+}
+let purls = [];
+function bg(v, dark) {
+  if (v.poster) {
+    const u = URL.createObjectURL(v.poster); purls.push(u);
+    return `linear-gradient(to top,rgba(0,0,0,.85),transparent 60%),url(${u}) center/cover`;
+  }
+  const h = v.created % 360;
+  return `linear-gradient(to top,hsl(${h} 50% ${dark}% / .95),hsl(${h} 60% 38% / .85))`;
+}
+async function refresh() {
+  videos = (await all()).sort((a, b) => (b.pinned - a.pinned) || (b.created - a.created));
+  renderGrid(); renderAdmin(); quota();
+}
+async function quota() {
+  try {
+    if (navigator.storage && navigator.storage.persist) await navigator.storage.persist();
+    const e = await navigator.storage.estimate();
+    $('sq').textContent = 'এই ব্রাউজারে জায়গা: ' + (e.usage / 1e9).toFixed(2) + ' GB ব্যবহৃত, মোট প্রায় ' + (e.quota / 1e9).toFixed(1) + ' GB';
+  } catch {}
+}
+function renderExtras(flt) {
+  const h = $('hero'), top = videos[0];
+  if (!top || flt) h.classList.add('hide');
+  else {
+    h.classList.remove('hide');
+    h.style.background = bg(top, 8);
+    $('ht').textContent = top.season ? top.season + ' · ' + top.title : top.title; $('hh').textContent = top.pinned ? 'Top pick' : 'New';
+    $('hp').onclick = () => play(top);
+  }
+  const p = user ? LS('prog:' + user, {}) : {}, c = $('cont'); c.innerHTML = '';
+  const items = flt ? [] : videos.filter(v => p[v.id] && p[v.id].t > 5 && p[v.id].t < p[v.id].d - 10);
+  $('contw').classList.toggle('hide', !items.length);
+  items.forEach(v => {
+    const b = document.createElement('button');
+    b.className = 'card cw'; b.style.background = bg(v, 10);
+    b.innerHTML = '<b></b><div class="bar"><i></i></div>';
+    b.firstChild.textContent = v.title;
+    b.querySelector('i').style.width = (p[v.id].t / p[v.id].d * 100) + '%';
+    b.onclick = () => play(v); c.appendChild(b);
+  });
+}
+function renderGrid() {
+  purls.forEach(URL.revokeObjectURL); purls = [];
+  const q = $('q').value.trim().toLowerCase(), g = $('grid');
+  renderExtras(!!(q || gen));
+  $('gh').textContent = q ? 'Search results' : (gen || 'All videos');
+  g.innerHTML = '';
+  const list = videos.filter(v => (!gen || v.genre === gen) && (v.title.toLowerCase().includes(q) || (v.season || '').toLowerCase().includes(q)));
+  if (!list.length) {
+    g.innerHTML = '<p class="muted"></p>';
+    g.firstChild.textContent = q ? '"' + q + '" নামে কিছু পাওয়া যায়নি।' : gen ? gen + ' ক্যাটাগরিতে এখনো কিছু নেই।' : 'এখনো কোনো ভিডিও নেই।' + (isAdmin() ? ' Account → Admin panel থেকে আপলোড করুন।' : '');
+    return;
+  }
+  const seen = new Set();
+  list.forEach(v => {
+    const b = document.createElement('button');
+    b.className = 'card';
+    if (v.season) {
+      if (seen.has(v.season)) return; seen.add(v.season);
+      const eps = videos.filter(x => x.season === v.season).sort(byEp);
+      b.style.background = bg(eps.find(x => x.poster) || eps[0], 10);
+      b.innerHTML = (eps.some(x => x.pinned) ? '<span class="pin">📌 Top</span>' : '') + '<b></b><small class="muted"></small>';
+      b.querySelector('b').textContent = v.season; b.querySelector('small').textContent = eps.length + ' parts';
+      b.onclick = () => openSeason(v.season);
+    } else {
+      b.style.background = bg(v, 10);
+      b.innerHTML = (v.pinned ? '<span class="pin">📌 Top</span>' : '') + '<b></b>';
+      b.querySelector('b').textContent = v.title;
+      b.onclick = () => play(v);
+    }
+    g.appendChild(b);
+  });
+}
+$('q').oninput = () => { show('home'); renderGrid() };
+
+// ---- Player (৩ সেকেন্ড পর কন্ট্রোল লুকায়, ট্যাপ করলে আবার আসে) ----
+let urls = [], hideT, lastSave = 0;
+const vid = $('vid'), ov = $('ov');
+const mk = b => { const u = URL.createObjectURL(b); urls.push(u); return u };
+const fmt = s => { s = Math.floor(s || 0); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return (h ? h + ':' + String(m).padStart(2, '0') : m) + ':' + String(x).padStart(2, '0') };
+
+function ping() {
+  ov.classList.remove('h'); clearTimeout(hideT);
+  if (!vid.paused && $('set').classList.contains('hide')) hideT = setTimeout(() => ov.classList.add('h'), 3000);
+}
+function hideNow() { clearTimeout(hideT); ov.classList.add('h'); $('set').classList.add('hide') }
+
+vid.addEventListener('click', ping);
+ov.addEventListener('click', e => { if (e.target.closest('button,input,select,.set')) ping(); else if (!vid.paused) hideNow(); });
+$('pw').addEventListener('mousemove', ping);
+vid.addEventListener('play', () => { $('pp').textContent = '❚❚'; ping() });
+vid.addEventListener('pause', () => { $('pp').textContent = '▶'; ping() });
+vid.addEventListener('ended', () => { ping(); const i = queue.findIndex(x => cur && x.id === cur.id); if (i >= 0 && queue[i + 1]) setTimeout(() => play(queue[i + 1], queue), 1500) });
+vid.addEventListener('timeupdate', () => {
+  if (vid.duration) { $('sk').value = vid.currentTime / vid.duration * 1000; $('td').textContent = fmt(vid.duration) }
+  $('tc').textContent = fmt(vid.currentTime);
+  const now = Date.now();
+  if (!cur || !user || now - lastSave < 4000 || !vid.duration) return;
+  lastSave = now;
+  const p = LS('prog:' + user, {}); p[cur.id] = { t: vid.currentTime, d: vid.duration }; SV('prog:' + user, p);
+});
+$('pp').onclick = () => vid.paused ? vid.play() : vid.pause();
+$('b10').onclick = () => { vid.currentTime = Math.max(0, vid.currentTime - 10); ping() };
+$('f10').onclick = () => { vid.currentTime = Math.min(vid.duration || 1e9, vid.currentTime + 10); ping() };
+$('sk').oninput = e => { if (vid.duration) vid.currentTime = e.target.value / 1000 * vid.duration; ping() };
+$('mu').onclick = () => { vid.muted = !vid.muted; $('mu').textContent = vid.muted ? '🔇' : '🔊' };
+$('gear').onclick = () => { $('set').classList.toggle('hide'); ping() };
+$('fs').onclick = () => {
+  const p = $('pw');
+  if (document.fullscreenElement) document.exitFullscreen();
+  else if (p.requestFullscreen) p.requestFullscreen().catch(() => {});
+  else if (vid.webkitEnterFullscreen) vid.webkitEnterFullscreen();
+};
+$('ar').onchange = e => vid.style.objectFit = e.target.value;
+$('au').onchange = e => { const at = vid.audioTracks; if (at) for (let i = 0; i < at.length; i++) at[i].enabled = i == e.target.value };
+$('su').onchange = e => [...vid.textTracks].forEach((t, i) => t.mode = i == e.target.value ? 'showing' : 'disabled');
+$('pc').onclick = () => $('dlg').close();
+$('dlg').addEventListener('close', () => { vid.pause(); clearTimeout(hideT); if (document.fullscreenElement) document.exitFullscreen(); renderGrid() });
+
+function play(v, q) {
+  queue = q || [];
+  if (!user) { show('account'); $('err').textContent = 'ভিডিও দেখতে আগে লগইন করুন'; return }
+  cur = v; urls.forEach(URL.revokeObjectURL); urls = [];
+  vid.innerHTML = ''; vid.src = mk(v.blob); $('pt').textContent = (v.season ? v.season + ' · ' : '') + v.title;
+  const su = $('su'); su.innerHTML = '<option value="-1">Off</option>';
+  (v.subs || []).forEach((s, i) => {
+    const t = document.createElement('track'); t.kind = 'subtitles'; t.label = s.lang; t.src = mk(s.blob); vid.appendChild(t);
+    su.appendChild(new Option(s.lang, i));
+  });
+  setTimeout(() => [...vid.textTracks].forEach(t => t.mode = 'disabled'), 50);
+  vid.style.objectFit = 'contain'; $('ar').value = 'contain'; vid.muted = false; $('mu').textContent = '🔊';
+  $('au').innerHTML = '<option value="-1">Default</option>';
+  vid.onloadedmetadata = () => {
+    const sp = LS('prog:' + user, {})[v.id]; if (sp && sp.t > 5 && sp.t < sp.d - 10) vid.currentTime = sp.t;
+    const at = vid.audioTracks;
+    if (at && at.length > 1) {
+      $('au').innerHTML = '';
+      for (let i = 0; i < at.length; i++) { const o = new Option(at[i].label || LN(at[i].language || '') || 'Track ' + (i + 1), i); o.selected = at[i].enabled; $('au').appendChild(o) }
+    }
+  };
+  $('set').classList.add('hide'); if (!$('dlg').open) $('dlg').showModal(); vid.play().catch(() => {}); ping();
+  const h = LS('hist:' + user, []).filter(x => x.id !== v.id);
+  h.unshift({ id: v.id, title: v.title, at: Date.now() }); SV('hist:' + user, h.slice(0, 50));
+}
+
+// ---- History / Request ----
+function renderHistory() {
+  const box = $('hl');
+  if (!user) { box.innerHTML = '<p class="muted">History দেখতে Account ট্যাব থেকে লগইন করুন।</p>'; return }
+  const h = LS('hist:' + user, []);
+  box.innerHTML = h.length ? '' : '<p class="muted">এখনো কিছু দেখা হয়নি।</p>';
+  h.forEach(x => {
+    const d = document.createElement('div'); d.className = 'item'; d.style.cursor = 'pointer';
+    d.innerHTML = '<span></span><span class="muted"></span>';
+    d.children[0].textContent = x.title; d.children[1].textContent = new Date(x.at).toLocaleDateString();
+    d.onclick = () => { const v = videos.find(y => y.id === x.id); if (v) play(v) };
+    box.appendChild(d);
+  });
+}
+$('hc').onclick = () => { if (user && confirm('History মুছে ফেলবেন?')) { SV('hist:' + user, []); renderHistory() } };
+function renderReq() {
+  const r = LS('reqs', []);
+  $('rql').innerHTML = r.length ? '' : '<p class="muted">কোনো রিকোয়েস্ট নেই।</p>';
+  r.forEach(x => { const d = document.createElement('div'); d.className = 'item'; d.innerHTML = '<span></span><span class="muted"></span>'; d.children[0].textContent = x.title; d.children[1].textContent = x.by; $('rql').appendChild(d) });
+}
+$('rqb').onclick = () => {
+  if (!user) { show('account'); return }
+  const t = $('rq').value.trim(); if (!t) return;
+  const r = LS('reqs', []); r.unshift({ title: t, by: user }); SV('reqs', r); $('rq').value = ''; renderReq();
+};
+
+// ---- Admin ----
+const isMkv = f => f && /\.mkv$/i.test(f.name);
+
+// ---- MKV → MP4 (ব্রাউজারেই, ffmpeg.wasm; সব অডিও ভাষা থাকে, সাবটাইটেল .vtt হয়ে প্লেয়ারে যায়) ----
+const CDN = 'https://cdn.jsdelivr.net/npm/', IMG = ['hdmv_pgs_subtitle', 'dvd_subtitle', 'dvb_subtitle', 'xsub'];
+let ff, tr = [], FL = [];
+const note = t => $('us').textContent = t;
+const blobURL = async (u, t) => URL.createObjectURL(new Blob([await (await fetch(u)).arrayBuffer()], { type: t }));
+async function engine() {
+  if (ff) return ff;
+  note('ইঞ্জিন লোড হচ্ছে (প্রথমবার ~30MB, নেট লাগবে)...');
+  await new Promise((ok, no) => { const s = document.createElement('script'); s.src = CDN + '@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js'; s.onload = ok; s.onerror = () => no(new Error('ইঞ্জিন লোড হয়নি, নেট দেখুন')); document.head.appendChild(s) });
+  const x = new FFmpegWASM.FFmpeg();
+  x.on('log', e => FL.push(e.message));
+  x.on('progress', e => { const p = Math.max(0, Math.min(100, e.progress * 100)); $('cp').style.width = p + '%'; note('কনভার্ট হচ্ছে... ' + p.toFixed(0) + '%') });
+  await x.load({
+    classWorkerURL: await blobURL(CDN + '@ffmpeg/ffmpeg@0.12.10/dist/umd/814.ffmpeg.js', 'text/javascript'),
+    coreURL: await blobURL(CDN + '@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js', 'text/javascript'),
+    wasmURL: await blobURL(CDN + '@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.wasm', 'application/wasm')
+  });
+  return ff = x;
+}
+$('af').onchange = async () => {
+  const f = $('af').files[0]; note(''); $('tk').classList.add('hide'); tr = [];
+  if (f && !$('at').value) $('at').value = f.name.replace(/\.[^.]+$/, '');
+  if (!isMkv(f)) return;
+  $('up').disabled = true;
+  try {
+    const x = await engine(); note('MKV পড়া হচ্ছে...');
+    try { await x.unmount('/in') } catch {}
+    try { await x.createDir('/in') } catch {}
+    await x.mount('WORKERFS', { files: [new File([f], 'input.mkv')] }, '/in');
+    FL = []; await x.exec(['-i', '/in/input.mkv']);
+    FL.forEach(l => { const m = l.match(/Stream #0:(\d+)(?:\[\w+\])?(?:\((\w+)\))?[^:]*: (Video|Audio|Subtitle): (\w+)/); if (m) tr.push({ i: +m[1], lang: m[2] || 'und', k: m[3], c: m[4], img: IMG.includes(m[4]) }) });
+    if (!tr.some(t => t.k === 'Video')) throw new Error('ভিডিও ট্র্যাক পাওয়া যায়নি');
+    const box = $('tl'); box.innerHTML = '';
+    tr.forEach(t => {
+      const l = document.createElement('label'), v = t.k === 'Video';
+      l.className = 'row'; l.style.cssText = 'margin:0;gap:8px;padding:8px 0;border-top:1px solid var(--gb)';
+      l.innerHTML = '<input type="checkbox" id="c' + t.i + '" style="width:auto" ' + (v || t.img ? 'disabled ' : '') + (t.img ? '' : 'checked') + '><span></span>';
+      l.lastChild.textContent = { Video: '🎬 Video', Audio: '🔊 Audio', Subtitle: '💬 Subtitle' }[t.k] + ' · ' + (t.lang === 'und' ? '?' : LN(t.lang)) + ' · ' + t.c +
+        (v && !['h264', 'hevc'].includes(t.c) ? ' (নতুন করে এনকোড হবে, অনেক ধীর)' : '') + (t.img ? ' (ছবির সাবটাইটেল, বাদ যাবে)' : '');
+      box.appendChild(l);
+    });
+    $('tk').classList.remove('hide');
+    note(f.size > 1.2e9 ? 'ফাইল বড়। ফোনে মেমরি শেষ হয়ে ক্র্যাশ করতে পারে, PC-র Chrome-এ করা নিরাপদ।' : 'ট্র্যাক বেছে Upload চাপুন।');
+  } catch (e) { tr = []; note('MKV পড়া যায়নি: ' + (e.message || e)) }
+  $('up').disabled = false;
+};
+async function convert() {
+  if (!tr.length) throw new Error('MKV ট্র্যাক পড়া হয়নি, ফাইলটা আবার বাছুন');
+  const x = ff, V = tr.find(t => t.k === 'Video'), pick = t => !t.img && $('c' + t.i).checked;
+  const A = tr.filter(t => t.k === 'Audio' && pick(t)), S = tr.filter(t => t.k === 'Subtitle' && pick(t)), subs = [];
+  $('cb').classList.remove('hide'); $('cp').style.width = '0';
+  try {
+    if (S.length) {
+      note('সাবটাইটেল বের হচ্ছে...');
+      const a = ['-i', '/in/input.mkv']; S.forEach(t => a.push('-map', '0:' + t.i, '-f', 'webvtt', 's' + t.i + '.vtt'));
+      try { await x.exec(a) } catch {}
+      const n = {};
+      for (const t of S) {
+        try {
+          const d = await x.readFile('s' + t.i + '.vtt'); await x.deleteFile('s' + t.i + '.vtt');
+          const nm = t.lang === 'und' ? 'Subtitle' : LN(t.lang); n[nm] = (n[nm] || 0) + 1;
+          subs.push({ lang: nm + (n[nm] > 1 ? ' ' + n[nm] : ''), blob: new Blob([d], { type: 'text/vtt' }) });
+        } catch {}
+      }
+    }
+    const h = V.c === 'h264' || V.c === 'hevc', a = ['-i', '/in/input.mkv', '-map', '0:' + V.i, '-c:v', h ? 'copy' : 'libx264'];
+    if (V.c === 'hevc') a.push('-tag:v', 'hvc1');
+    if (!h) a.push('-preset', 'ultrafast', '-crf', '23', '-pix_fmt', 'yuv420p');
+    A.forEach((t, k) => { a.push('-map', '0:' + t.i); if (t.c === 'aac') a.push('-c:a:' + k, 'copy'); else a.push('-c:a:' + k, 'aac', '-b:a:' + k, '160k', '-ac:a:' + k, '2') });
+    a.push('-map_chapters', '-1', '-f', 'mp4', 'out.mp4');
+    note('কনভার্ট হচ্ছে...');
+    if (await x.exec(a) !== 0) throw new Error('কনভার্ট ব্যর্থ (ফাইল বড় হলে মেমরি শেষ হতে পারে)');
+    const d = await x.readFile('out.mp4'); await x.deleteFile('out.mp4');
+    return { mp4: new Blob([d], { type: 'video/mp4' }), subs };
+  } finally { $('cb').classList.add('hide') }
+}
+$('sc').onchange = () => $('sw').classList.toggle('hide', !$('sc').checked);
+$('sa').onclick = () => {
+  const n = (prompt('নতুন Season-এর নাম (যেমন Season 1)') || '').trim(); if (!n) return;
+  const s = LS('seasons', []); if (!seasons().includes(n)) { s.push(n); SV('seasons', s) }
+  renderAdmin(); $('sn').value = n; $('sn').onchange();
+};
+$('sn').onchange = () => { const e = videos.find(x => x.season === $('sn').value && x.genre); if (e) $('ag').value = e.genre };
+$('up').onclick = async () => {
+  if (!isAdmin()) return;
+  const f = $('af').files[0], t = $('at').value.trim(), on = $('sc').checked, sea = on ? $('sn').value : '';
+  if (!f) { $('us').textContent = 'আগে একটা ভিডিও ফাইল বেছে নিন'; return }
+  if (!t) { $('us').textContent = 'একটা টাইটেল দিন'; return }
+  if (on && !sea) { $('us').textContent = 'আগে + চেপে একটা Season বানিয়ে বেছে নিন'; return }
+  $('up').disabled = true; $('us').textContent = 'সেভ হচ্ছে, অপেক্ষা করুন...';
+  try {
+    let blob = f; const subs = [];
+    if (isMkv(f)) { const r = await convert(); blob = r.mp4; subs.push(...r.subs) }
+    for (const s of $('sf').files) subs.push({ lang: guess(s.name) || $('sl').value, blob: await toVtt(s) });
+    const ep = sea ? (+$('se').value || Math.max(0, ...videos.filter(x => x.season === sea).map(x => x.ep || 0)) + 1) : null;
+    await put({ id: crypto.randomUUID(), title: t, blob, poster: $('pf').files[0] || null, subs, pinned: 0, created: Date.now(), genre: $('ag').value, season: sea || null, ep });
+    $('us').textContent = 'আপলোড হয়েছে'; $('tk').classList.add('hide'); tr = [];
+    ['at', 'af', 'pf', 'sf', 'se'].forEach(i => $(i).value = '');
+    refresh();
+  } catch (e) { $('us').textContent = 'সেভ হয়নি (' + (e && (e.message || e.name) || 'error') + '). ফাইল ছোট বা জায়গা কম হতে পারে।' }
+  $('up').disabled = false;
+};
+function row(v, ep) {
+  const d = document.createElement('div'); d.className = 'item' + (ep ? ' ep' : '');
+  d.innerHTML = '<span></span><span class="row" style="margin:0"><button class="btn s sm"></button><button class="btn s sm">Edit</button><button class="btn s sm">Poster</button><button class="btn s sm"></button><button class="btn d sm">Delete</button></span>';
+  d.firstChild.textContent = (v.pinned ? '📌 ' : '') + (ep ? (v.ep || '') + '. ' : '') + v.title + (v.subs && v.subs.length ? ' 💬' + v.subs.length : '');
+  const [p, e, po, g, x] = d.querySelectorAll('button'), L = [''].concat(G);
+  p.textContent = v.pinned ? 'Unpin' : 'Pin'; g.textContent = v.genre || 'Mix';
+  p.onclick = async () => { v.pinned = v.pinned ? 0 : 1; await put(v); refresh() };
+  g.onclick = async () => { v.genre = L[(L.indexOf(v.genre || '') + 1) % L.length]; await put(v); refresh() };
+  e.onclick = async () => { const n = prompt('নতুন টাইটেল', v.title); if (n && n.trim()) { v.title = n.trim(); await put(v); refresh() } };
+  po.onclick = () => {
+    const i = document.createElement('input'); i.type = 'file'; i.accept = 'image/*';
+    i.onchange = async () => { if (i.files[0]) { v.poster = i.files[0]; await put(v); refresh() } };
+    i.click();
+  };
+  x.onclick = async () => { if (confirm('"' + v.title + '" মুছে ফেলবেন?')) { await del(v.id); refresh() } };
+  return d;
+}
+function renderAdmin() {
+  const cur = $('sn').value, ss = seasons();
+  $('sn').replaceChildren(...(ss.length ? ss.map(n => new Option(n, n)) : [new Option('— আগে + চেপে Season বানান —', '')]));
+  if (ss.includes(cur)) $('sn').value = cur;
+  const a = $('al'); a.innerHTML = videos.length || ss.length ? '' : '<p class="muted">কিছু নেই।</p>';
+  ss.forEach(n => {
+    const h = document.createElement('div'); h.className = 'item'; h.innerHTML = '<b></b><button class="btn d sm">Delete season</button>';
+    h.firstChild.textContent = '📺 ' + n;
+    h.lastChild.onclick = async () => {
+      if (!confirm('"' + n + '" Season আর এর সব পার্ট মুছে ফেলবেন?')) return;
+      for (const v of videos.filter(x => x.season === n)) await del(v.id);
+      SV('seasons', LS('seasons', []).filter(x => x !== n)); refresh();
+    };
+    a.appendChild(h);
+    videos.filter(v => v.season === n).sort(byEp).forEach(v => a.appendChild(row(v, true)));
+  });
+  videos.filter(v => !v.season).forEach(v => a.appendChild(row(v)));
+}
+
+$('sb').onclick = () => show('home');
+function openSeason(n) {
+  show('season'); $('stl').textContent = n;
+  const eps = videos.filter(v => v.season === n).sort(byEp);
+  const box = $('sl3'); box.innerHTML = '';
+  eps.forEach((v, i) => {
+    const d = document.createElement('div'); d.className = 'item'; d.style.cursor = 'pointer';
+    d.innerHTML = '<span></span><span class="muted">▶</span>';
+    d.children[0].textContent = (v.ep || i + 1) + '. ' + v.title;
+    d.onclick = () => play(v, eps); box.appendChild(d);
+  });
+}
+open().then(boot);
+</script>
+</body>
+</html>
